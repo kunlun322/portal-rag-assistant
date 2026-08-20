@@ -1,0 +1,12 @@
+{
+  "name": "portal-rag-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "description": "portal-rag-assistant — 蔚小理汽车 NEXLI 官网智能客服助手（Auto + Ask），基于 Qoder Cloud Agents 知识库问答",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
