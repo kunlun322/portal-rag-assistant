@@ -14,6 +14,14 @@
 
   var ERROR_TEXT = "服务暂时繁忙，请稍后再试";
   var TURN_TIMEOUT_MS = 90000; // 90 秒无任何事件 → 判定超时，避免卡死 loading
+  var TYPING_HINTS = [
+    "消息已收到",
+    "正在努力查询",
+    "请稍后",
+    "正在为您检索资料…",
+    "即将为您整理答案…"
+  ];
+  var TYPING_HINT_INTERVAL_MS = 3000; // 轮播间隔：需求范围 2–4 秒
 
   var ICON_CHAT =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -34,6 +42,7 @@
   var welcomed = false;
   var turnText = ""; // 本轮累计的 Agent 回答文本
   var typingRow = null;
+  var hintTimer = null; // 等待轮播提示文字的定时器
   var streamBubble = null; // 本轮流式渲染的气泡
   var turnTimer = null;
   var seenEventIds = []; // 幂等消费：按 Event ID 去重（SSE 断线重连续传）
@@ -217,6 +226,26 @@
     quickBar.classList.add("cs-quickbar--hidden");
   }
 
+  function startHintCarousel(hintEl) {
+    var index = 0;
+    hintEl.textContent = TYPING_HINTS[0];
+    hintTimer = setInterval(function () {
+      hintEl.classList.add("cs-typing__hint--fade");
+      setTimeout(function () {
+        index = (index + 1) % TYPING_HINTS.length;
+        hintEl.textContent = TYPING_HINTS[index];
+        hintEl.classList.remove("cs-typing__hint--fade");
+      }, 250); // 与 CSS 淡出时长一致
+    }, TYPING_HINT_INTERVAL_MS);
+  }
+
+  function stopHintCarousel() {
+    if (hintTimer) {
+      clearInterval(hintTimer);
+      hintTimer = null;
+    }
+  }
+
   function showTyping() {
     hideTyping();
     typingRow = el("div", "cs-msg cs-msg--bot");
@@ -224,12 +253,16 @@
     bubble.appendChild(el("span"));
     bubble.appendChild(el("span"));
     bubble.appendChild(el("span"));
+    var hint = el("span", "cs-typing__hint");
+    bubble.appendChild(hint);
     typingRow.appendChild(bubble);
     messagesBox.appendChild(typingRow);
     scrollToBottom();
+    startHintCarousel(hint);
   }
 
   function hideTyping() {
+    stopHintCarousel();
     if (typingRow) {
       typingRow.remove();
       typingRow = null;
