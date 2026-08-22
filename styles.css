@@ -659,8 +659,26 @@ section[id] {
 /* 实车图片视觉（v2 增补） */
 .hero--index {
   background:
-    linear-gradient(180deg, rgba(11,13,16,0.5) 0%, rgba(11,13,16,0.2) 45%, rgba(11,13,16,0.88) 100%),
-    url("images/hero-index.jpg") center 68% / cover no-repeat;
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(46, 168, 181, 0.35), transparent 65%),
+    radial-gradient(ellipse 60% 45% at 78% -10%, rgba(70, 90, 120, 0.35), transparent 70%),
+    linear-gradient(180deg, #0b0d10 0%, #10141a 55%, #0b0d10 100%);
+}
+/* 车图压底：独立图层 + 径向遮罩淡出边缘，车主体落在视口下部，与上部文字分离 */
+.hero--index::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("images/hero-index.jpg") center bottom / auto 68% no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 70% 52% at 50% 80%, #000 40%, transparent 90%);
+  mask-image: radial-gradient(ellipse 70% 52% at 50% 80%, #000 40%, transparent 90%);
+}
+/* 首页 Hero 文字整体上移：文本区占据上部，车图主体落在视口下部，互不重叠 */
+.hero--index {
+  align-items: flex-start;
+}
+.hero--index .hero__content {
+  padding-top: 10vh;
+  padding-bottom: 0;
 }
 .hero--model {
   background:

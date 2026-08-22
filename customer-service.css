@@ -263,7 +263,7 @@
   padding: 12px 14px;
 }
 
-.cs-typing span {
+.cs-typing span:not(.cs-typing__hint) {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -271,12 +271,27 @@
   animation: cs-blink 1s infinite;
 }
 
-.cs-typing span:nth-child(2) {
+.cs-typing span:nth-of-type(2) {
   animation-delay: 0.2s;
 }
 
-.cs-typing span:nth-child(3) {
+.cs-typing span:nth-of-type(3) {
   animation-delay: 0.4s;
+}
+
+/* 等待轮播提示文字：与圆点共存，淡入淡出切换 */
+.cs-typing__hint {
+  margin-left: 8px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--cs-text-muted);
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.cs-typing__hint--fade {
+  opacity: 0;
 }
 
 @keyframes cs-blink {
